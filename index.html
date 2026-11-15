@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090d1a">
+  <meta name="description" content="Personal Life OS — your private space for tasks, plans, projects, notes and money.">
+  <title>Personal Life OS</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="lockScreen" class="lock-screen hidden" aria-modal="true" role="dialog">
+    <div class="lock-card glass">
+      <div class="brand-mark">L</div>
+      <p class="eyebrow">YOUR PRIVATE SPACE</p>
+      <h1 id="lockHeading">Welcome back</h1>
+      <p class="muted" id="lockCopy">Enter your PIN to unlock Personal Life OS.</p>
+      <form id="unlockForm">
+        <input id="pinEntry" class="pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="Enter PIN" autocomplete="current-password" aria-label="PIN">
+        <p id="pinError" class="form-error" aria-live="polite"></p>
+        <button class="btn btn-primary full" type="submit">Unlock dashboard</button>
+      </form>
+      <button id="lockSetupLink" class="text-button hidden" type="button">Set up a PIN</button>
+    </div>
+  </div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar glass">
+      <a class="brand" href="#" data-page="dashboard">
+        <span class="brand-mark">L</span><span><b>Personal Life OS</b><small>YOUR LIFE, IN ONE PLACE</small></span>
+      </a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-page="dashboard"><span>⌂</span>Overview</button>
+        <button class="nav-item" data-page="tasks"><span>☷</span>Tasks <i id="navTaskCount">0</i></button>
+        <button class="nav-item" data-page="calendar"><span>▦</span>Calendar</button>
+        <button class="nav-item" data-page="projects"><span>◇</span>Projects</button>
+        <button class="nav-item" data-page="notes"><span>▤</span>Notes</button>
+        <button class="nav-item" data-page="finance"><span>₹</span>Finance</button>
+      </nav>
+      <div class="side-label side-label-spaced">PERSONAL</div>
+      <nav class="side-nav">
+        <button class="nav-item" data-page="habits"><span>✧</span>Habits</button>
+        <button class="nav-item" data-page="settings"><span>⚙</span>Settings & privacy</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="privacy-mini"><span class="privacy-icon">⌑</span><div><b>Your data stays here</b><small>Saved on this device</small></div></div>
+        <button id="sidebarLock" class="nav-item"><span>▣</span>Lock dashboard</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark">L</span><b>Personal Life OS</b></div>
+        <div class="breadcrumb"><span>Workspace</span><span>/</span><b id="pageCrumb">Overview</b></div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="searchButton" aria-label="Search">⌕</button>
+          <button class="icon-button notification-button" id="notificationButton" aria-label="Enable reminders">♧</button>
+          <button class="avatar" id="profileButton" aria-label="Profile settings">D</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-row">
+          <div><p class="eyebrow">PERSONAL CONTROL CENTRE</p><h1 id="greeting">Good morning.</h1><p class="muted">A clear mind starts with a clear plan.</p></div>
+          <div class="date-chip" id="todayDate"></div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card glass"><div class="stat-top"><span>Today's tasks</span><span class="stat-symbol blue">☷</span></div><strong id="statToday">0</strong><small>Tasks scheduled for today</small></article>
+          <article class="stat-card glass"><div class="stat-top"><span>Upcoming</span><span class="stat-symbol violet">◷</span></div><strong id="statUpcoming">0</strong><small>Next seven days</small></article>
+          <article class="stat-card glass"><div class="stat-top"><span>Completed</span><span class="stat-symbol green">✓</span></div><strong id="statCompleted">0</strong><small>Tasks you've finished</small></article>
+          <article class="stat-card glass"><div class="stat-top"><span>Still pending</span><span class="stat-symbol orange">◌</span></div><strong id="statPending">0</strong><small>One step at a time</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <div class="stack">
+            <section class="panel glass">
+              <div class="section-heading"><div><h2>Today's priorities</h2><p>Focus on what matters most.</p></div><button class="btn btn-primary" data-action="add-task">＋ Add task</button></div>
+              <div id="dashboardTasks" class="task-list"></div>
+              <button class="link-button" data-page="tasks">See all tasks <span>→</span></button>
+            </section>
+            <section class="panel glass">
+              <div class="section-heading"><div><h2>Your life areas</h2><p>Keep different parts of life organised.</p></div></div>
+              <div class="area-grid" id="areaGrid"></div>
+            </section>
+          </div>
+          <div class="stack">
+            <section class="panel glass">
+              <div class="section-heading"><div><h2>Coming up</h2><p>Don't let important dates slip by.</p></div><button class="icon-button small" data-page="calendar" aria-label="Open calendar">↗</button></div>
+              <div id="upcomingEvents" class="upcoming-list"></div>
+            </section>
+            <section class="panel glass">
+              <div class="section-heading"><div><h2>Quick capture</h2><p>Write it down before it disappears.</p></div><span class="section-emoji">✎</span></div>
+              <textarea id="quickNote" class="quick-note" placeholder="An idea, a reminder, something to remember..."></textarea>
+              <div class="save-line"><span id="quickNoteStatus">Auto-saves on this device</span><button class="text-button" data-page="notes">Open notes →</button></div>
+            </section>
+            <section class="focus-card">
+              <div class="focus-orb">✧</div><p class="eyebrow">A SMALL REMINDER</p><h2>You don't have to remember everything.</h2><p>Capture it here. Give your mind room to focus on what matters now.</p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-tasks">
+        <div class="page-heading"><div><p class="eyebrow">STAY ON TRACK</p><h1>Tasks</h1><p class="muted">Every task out of your head and into a plan.</p></div><button class="btn btn-primary" data-action="add-task">＋ New task</button></div>
+        <div class="panel glass">
+          <div class="toolbar"><div class="segmented" id="taskFilters"><button class="selected" data-filter="All">All</button><button data-filter="Today">Today</button><button data-filter="Upcoming">Upcoming</button><button data-filter="Completed">Completed</button></div><select id="taskCategoryFilter" class="select-control"><option value="All">All areas</option><option>Work</option><option>Study</option><option>Projects</option><option>Personal</option><option>Finance</option><option>Health</option><option>Other</option></select></div>
+          <div id="allTasksList" class="task-list"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-calendar">
+        <div class="page-heading"><div><p class="eyebrow">SEE WHAT'S AHEAD</p><h1>Calendar</h1><p class="muted">Dates, deadlines and plans in one view.</p></div><button class="btn btn-primary" data-action="add-task">＋ Add event</button></div>
+        <div class="calendar-layout">
+          <section class="panel glass"><div class="calendar-head"><button class="icon-button" id="prevMonth">‹</button><h2 id="calendarMonth"></h2><button class="icon-button" id="nextMonth">›</button></div><div class="calendar-grid" id="calendarGrid"></div></section>
+          <section class="panel glass"><div class="section-heading"><div><h2 id="selectedDateTitle">Selected day</h2><p>Tasks and events on this date.</p></div><button class="icon-button small" data-action="add-task">＋</button></div><div id="selectedDateTasks" class="task-list"></div></section>
+        </div>
+      </section>
+
+      <section class="page" id="page-projects">
+        <div class="page-heading"><div><p class="eyebrow">MAKE PROGRESS VISIBLE</p><h1>Projects</h1><p class="muted">Track the bigger things you're building.</p></div><button class="btn btn-primary" data-action="add-project">＋ New project</button></div>
+        <div class="project-grid" id="projectGrid"></div>
+      </section>
+
+      <section class="page" id="page-notes">
+        <div class="page-heading"><div><p class="eyebrow">CAPTURE YOUR THOUGHTS</p><h1>Notes</h1><p class="muted">A safe place for ideas, details and things to remember.</p></div><button class="btn btn-primary" data-action="add-note">＋ New note</button></div>
+        <div class="notes-grid" id="notesGrid"></div>
+      </section>
+
+      <section class="page" id="page-finance">
+        <div class="page-heading"><div><p class="eyebrow">BE INTENTIONAL WITH MONEY</p><h1>Finance</h1><p class="muted">A simple personal snapshot. No bank connection.</p></div><button class="btn btn-primary" data-action="add-transaction">＋ Add entry</button></div>
+        <div class="finance-stats stats-grid"><article class="stat-card glass"><span class="muted">Income</span><strong id="incomeTotal">₹0</strong></article><article class="stat-card glass"><span class="muted">Expenses</span><strong id="expenseTotal">₹0</strong></article><article class="stat-card glass"><span class="muted">Balance</span><strong id="balanceTotal">₹0</strong></article></div>
+        <section class="panel glass"><div class="section-heading"><div><h2>Recent entries</h2><p>Record income and spending manually.</p></div></div><div id="transactionList" class="task-list"></div></section>
+      </section>
+
+      <section class="page" id="page-habits">
+        <div class="page-heading"><div><p class="eyebrow">CONSISTENCY OVER PERFECTION</p><h1>Habits</h1><p class="muted">Build small routines that support your day.</p></div><button class="btn btn-primary" data-action="add-habit">＋ Add habit</button></div>
+        <section class="panel glass"><div id="habitList" class="habit-list"></div></section>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="page-heading"><div><p class="eyebrow">YOUR SPACE, YOUR RULES</p><h1>Settings & privacy</h1><p class="muted">Control access and manage your local data.</p></div></div>
+        <div class="settings-grid">
+          <section class="panel glass"><h2>Privacy lock</h2><p class="muted">Set a PIN to lock this dashboard on this device.</p><div class="setting-row"><div><b>Dashboard PIN</b><small id="pinStatus">Not configured</small></div><button class="btn btn-secondary" id="changePin">Set / change PIN</button></div><div class="setting-row"><div><b>Lock now</b><small>Hide your dashboard until unlocked.</small></div><button class="btn btn-secondary" id="lockNow">Lock dashboard</button></div></section>
+          <section class="panel glass"><h2>Data & backup</h2><p class="muted">Your information is stored in this browser's local storage.</p><div class="setting-row"><div><b>Export backup</b><small>Download your tasks, notes and projects as JSON.</small></div><button class="btn btn-secondary" id="exportData">Export</button></div><div class="setting-row"><div><b>Import backup</b><small>Restore a previously exported JSON backup.</small></div><label class="btn btn-secondary file-label">Import<input id="importData" type="file" accept="application/json" hidden></label></div><div class="setting-row danger-row"><div><b>Clear all data</b><small>This permanently removes local dashboard data.</small></div><button class="btn btn-danger" id="clearData">Clear data</button></div></section>
+          <section class="panel glass"><h2>Reminders</h2><p class="muted">Browser notifications require permission and may not work when the browser is closed.</p><div class="setting-row"><div><b>Notifications</b><small id="notificationStatus">Not enabled</small></div><button class="btn btn-secondary" id="enableNotifications">Enable</button></div></section>
+        </div>
+      </section>
+      <footer class="footer-note">PERSONAL LIFE OS <span>•</span> Private by design, stored on this device</footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="mobile-nav-item active" data-page="dashboard"><span>⌂</span>Home</button>
+    <button class="mobile-nav-item" data-page="tasks"><span>☷</span>Tasks</button>
+    <button class="mobile-add" data-action="add-task" aria-label="Add task">＋</button>
+    <button class="mobile-nav-item" data-page="calendar"><span>▦</span>Calendar</button>
+    <button class="mobile-nav-item" data-page="projects"><span>◇</span>Projects</button>
+  </nav>
+
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <section class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-heading"><div><p class="eyebrow" id="modalEyebrow">QUICK CAPTURE</p><h2 id="modalTitle">Add task</h2></div><button class="icon-button" id="closeModal" aria-label="Close">×</button></div>
+      <form id="modalForm"><div id="modalFields" class="form-fields"></div><div class="modal-actions"><button class="btn btn-secondary" type="button" id="cancelModal">Cancel</button><button class="btn btn-primary" type="submit">Save</button></div></form>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
